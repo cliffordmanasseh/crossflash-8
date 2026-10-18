@@ -2,7 +2,7 @@
   "format": "modal-crossflash-patch/1",
   "description": "Make official Modal Carbon 8 firmware boot on a Cobalt 8 (model id 0x19) unit.",
   "provenance": {
-    "source_images": "Official Modal Electronics firmware, downloaded from Modal's public update server (the same files MODALapp fetches). Not included in this repository.",
+    "source_images": "Official Modal Electronics firmware files, supplied by the user. Not included in this repository and not obtainable through it.",
     "verified_on": "Cobalt 8 / 8X hardware, bootloader report model 0x19",
     "confirmed": "Carbon 8 boots after applying this patch set (2026-10-18)"
   },
