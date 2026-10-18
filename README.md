@@ -42,26 +42,24 @@ makes the Carbon panel accept a `0x19` unit.
 
 ---
 
-## Where the official firmware comes from
+## Requirements: firmware you already possess, lawfully
 
-Modal does not publish a standalone download page; **MODALapp** fetches firmware from
+This project **does not provide, download, link to, or help you obtain firmware**. It only
+applies a small edit to files **you already have**.
 
-```
-https://www.modalelectronics.com/update-server/<Product>_8/release/<file>     (+ a VERSION file)
-```
+To use it you must already possess the **official** source-model firmware (the three `.syx`
+files) **in a way that is lawful for you** — for example because you own a device of that
+model, or the vendor supplied them to you. It is **your** responsibility to ensure you are
+entitled to use those files with your hardware, and to comply with any licence/EULA that
+governs them.
 
-and only fetches the model that matches the **connected** device. Two practical routes:
+The project supports exactly the releases named in `patches/` and **refuses everything else**
+(the SHA‑256 gate). It does not include any acquisition tooling, firmware URLs, keys, or
+bypass of encryption or signatures — see `COMPLIANCE.md` for the full reasoning.
 
-1. **Fetch the file yourself** from that public server path layout (the same URLs MODALapp
-   uses), or
-2. **Mirror the update server locally** and point MODALapp at it
-   (`MODALapp.exe --localupdate http://127.0.0.1:8080`) with the same directory layout
-   (`<Product>_8/release/<Product>8_{panel,master,slave}_<ver>.syx` + `VERSION`).
+Supported here: **the source firmware revision listed in the patch file** (currently Carbon 8
+`1-1`). Other revisions have a different layout and are deliberately refused.
 
-Either way **you** obtain the official file; this tool never downloads or redistributes it.
-
-Supported here: **Carbon 8 firmware `1-1`**. Other revisions have a different layout and are
-deliberately refused (the SHA‑256 gate).
 
 ---
 
