@@ -8,10 +8,15 @@ This repository contains **only tooling**: a patcher that applies a handful of b
 to firmware files *you* already have, and a flasher that talks to the synth's bootloader.
 No `.syx`/`.bin` firmware is included, and none ever needs to be.
 
-**Status: verified on hardware.** The Carbon 8 `1-1` patch was built with this patcher and
-flashed with this flasher; a Cobalt 8 accepted all three components on the first pass
-(~3½ minutes) and booted running Carbon 8 firmware. Only the three application components are
-ever written — the bootloader is never touched.
+**Status: verified on hardware — in exactly one configuration so far.**
+
+| | |
+|---|---|
+| **host OS** | **Linux only.** The ALSA backend is what was exercised end to end; the `mido` path for macOS/Windows is provided but **untested against hardware**. |
+| **models** | **Carbon 8 `1-1` firmware on a Cobalt 8**, only. Cobalt 8X is untested; Argon 8 is not implemented at all. |
+| **result** | a Cobalt 8 accepted all three components on the first pass (**~3½ minutes**) and booted running Carbon 8 firmware. |
+
+Only the three application components are ever written — the bootloader is never touched.
 
 ---
 
@@ -76,7 +81,7 @@ verification, troubleshooting and recovery. The short version:
 git clone <this repo> && cd crossflash-8
 python3 -m crossflash8.patcher \
     --patches patches/carbon8_1-1_to_cobalt8.json \
-    --from /path/to/carbon8_firmware \
+    --from /path/to/your/official/syx \
     --out ./out
 ```
 
@@ -87,10 +92,10 @@ Put the synth into update mode (**power on holding SHIFT/INIT** → *"UPDATE / w
 MODALapp connection"*), then flash:
 
 ```bash
-# Linux (ALSA, no extra deps)
+# Linux (ALSA, no extra deps)                       <- the path verified on hardware
 python3 -m crossflash8.flash_alsa --dir ./out --pace-ms 20
 
-# Windows / macOS / Linux (mido)
+# Windows / macOS / Linux (mido)                    <- untested on hardware so far
 pip install mido python-rtmidi
 python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
 ```
@@ -98,6 +103,9 @@ python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
 The unit reboots when all three components are accepted. **Do not unplug during the flash.**
 
 ### Windows
+
+*Untested on hardware so far — see the status table at the top. The protocol code is identical
+to the Linux path, but nobody has run this against a unit yet.*
 
 * The **patcher is pure standard library** and runs on Windows as‑is, e.g.
   `py -m crossflash8.patcher --patches patches\carbon8_1-1_to_cobalt8.json --from path\to\firmware --out .\out`.

@@ -36,6 +36,7 @@ The rest of this document explains those steps, and how to tell success from fai
 
 | | |
 |---|---|
+| **verified so far** | **Linux host + Cobalt 8 unit + Carbon 8 `1‑1` firmware.** Every other combination (macOS/Windows host, Cobalt 8X, Argon 8) is **untested** — see §2 |
 | **the synth** | the target unit — e.g. a Cobalt 8 / 8X |
 | **USB cable** | a **data** cable (not charge‑only); a direct port is preferred over an unpowered hub |
 | **computer** | Linux, macOS or Windows |
@@ -47,11 +48,16 @@ The rest of this document explains those steps, and how to tell success from fai
 
 ## 2. Which flasher to use
 
-| your OS | backend | extra install |
-|---|---|---|
-| **Linux** | `crossflash8.flash_alsa` | **none** — standard library only, talks to ALSA raw‑MIDI |
-| **macOS** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` |
-| **Windows** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` |
+| your OS | backend | extra install | status |
+|---|---|---|---|
+| **Linux** | `crossflash8.flash_alsa` | **none** — standard library only, talks to ALSA raw‑MIDI | **verified on hardware** |
+| **macOS** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` | untested |
+| **Windows** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` | untested |
+
+> **Scope of what has actually been tested.** Only the **Linux/ALSA** backend has been run
+> against a real unit, and only with **Carbon 8 `1‑1` firmware on a Cobalt 8** (see §1). The
+> `mido` backend shares the same protocol implementation but has **not** been exercised on
+> hardware yet, and no other model combination has been tried — treat those as unproven.
 
 The **patcher is standard‑library only** and identical on all three platforms. Only the flasher
 differs: Linux can talk to `/dev/snd/midi*` directly, so it needs nothing; macOS and Windows go
@@ -107,7 +113,7 @@ sudo usermod -aG audio "$USER"        # then log out and back in
 `aconnect`, and any other MIDI software before flashing — a second reader on the port is the
 most common cause of flaky transfers.
 
-### 3.3 macOS
+### 3.3 macOS *(untested on hardware)*
 
 macOS has no ALSA, so use the `mido` backend:
 
@@ -120,7 +126,7 @@ Use **Python 3.8–3.12**: `python-rtmidi` publishes prebuilt wheels for those v
 compiler is needed. On 3.13+ there is no wheel yet and the install would build from source
 (needs Apple's Xcode command line tools). No special permissions are required for CoreMIDI.
 
-### 3.4 Windows
+### 3.4 Windows *(untested on hardware)*
 
 Use the **python.org** installer for **Python 3.8–3.12** (wheels exist for those; 3.13+ would
 need a C++ build toolchain), then:
@@ -238,7 +244,7 @@ python3 -m crossflash8.flash_alsa --dir ./out --pace-ms 20
 python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
 ```
 
-You should see something like this (annotated):
+You should see something like this (annotated transcript from the verified Linux/ALSA run):
 
 ```
 port hw:3,0,0 (/dev/snd/midiC3D0)                             <- port found
