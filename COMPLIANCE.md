@@ -55,6 +55,40 @@ personal-use** tool.
 * `git config core.hooksPath .githooks` enables a `pre-commit` hook that runs that check
   (see `CONTRIBUTING.md`).
 
+## EULA / licence review (checked 2026-10-18)
+
+Findings — **there is no published firmware or software EULA from the vendor**:
+
+* The vendor website footer links only **Terms** and Privacy Policy; the MODALapp page has
+  **no licence/EULA link**.
+* `MODALapp.exe` contains **no EULA text** (the only licence strings are for embedded fonts).
+* No bundled text/PDF licence in the application bundle.
+
+The only public vendor legal text is the **Website Terms** (last updated 10 Jan 2025). Relevant
+clauses and why they are weak hooks here:
+
+| clause | text (abridged) | relevance |
+|---|---|---|
+| Copyright | rights in "material on this website" owned by the vendor | firmware isn't website material; and we ship none |
+| Distribution | "No copying or distribution of material on this website for any **commercial or business use** …" | scoped to website material **and** commercial use; this project is free/non‑commercial and ships no firmware |
+| Conduct | use the site "for lawful purposes only … not … bring [vendor] into disrepute or ridicule" | rhetorical; binds site users |
+| Indemnity | user indemnifies vendor for claims from *use of the site* | not aimed at third‑party tools |
+| Governing law | English law | — |
+
+Notes:
+
+* There is **no firmware licence term** prohibiting modification or cross‑hardware use that we
+  could find, so the "you agreed not to do this" contract argument is weak.
+* The app is distributed via the Apple App Store, whose **standard EULA** bars reverse
+  engineering of **the app** — not of the device firmware. This project distributes nothing
+  derived from the app (a protocol/interfaces are not copyrightable), and this repository
+  never touches the app.
+* Warranty is a separate, commercial matter (the vendor advertises a multi‑year warranty);
+  cross‑flashing may void it — see `DISCLAIMER.md`.
+* Absence of an EULA does **not** remove statutory copyright. The mitigation remains: ship
+  no vendor code, patch‑only, user‑supplied files, SHA‑256‑gated.
+
+
 ## If you receive a complaint
 
 There is nothing infringing to remove (no vendor code). The reasonable response is to
