@@ -1,7 +1,7 @@
 """Cross-platform flasher using mido + python-rtmidi (Windows / macOS / Linux).
 
     pip install mido python-rtmidi
-    python -m modalpatcher.flash_mido --dir ./out
+    python -m crossflash8.flash_mido --dir ./out
 
 Same protocol/pacing as the ALSA backend: identify -> start -> serve each component
 the bootloader requests, 20 ms per message, answering re-requests immediately.

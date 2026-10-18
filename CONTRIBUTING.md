@@ -32,5 +32,5 @@ python3 tools/check_no_firmware.py      # run manually any time
 ## Code style
 
 * Standard library only for the base path; keep `mido` optional.
-* Run `python3 -m modalpatcher.patcher` on your own files and confirm
+* Run `python3 -m crossflash8.patcher` on your own files and confirm
   `python3 tools/check_no_firmware.py` passes before pushing.

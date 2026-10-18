@@ -1,4 +1,4 @@
-# modal-crossflash
+# crossflash-8
 
 Run **Carbon 8** (and, by the same technique, **Argon 8**) firmware on a **Cobalt 8 / 8X**
 unit over USB‑MIDI — **without shipping a single byte of Modal Electronics' firmware**.
@@ -66,8 +66,8 @@ Supported here: **the source firmware revision listed in the patch file** (curre
 ## Usage
 
 ```bash
-git clone <this repo> && cd modal-crossflash
-python3 -m modalpatcher.patcher \
+git clone <this repo> && cd crossflash-8
+python3 -m crossflash8.patcher \
     --patches patches/carbon8_1-1_to_cobalt8.json \
     --from ~/Downloads/carbon8_firmware \
     --out ./out
@@ -81,11 +81,11 @@ MODALapp connection"*), then flash:
 
 ```bash
 # Linux (ALSA, no extra deps)
-python3 -m modalpatcher.flash_alsa --dir ./out --pace-ms 20
+python3 -m crossflash8.flash_alsa --dir ./out --pace-ms 20
 
 # Windows / macOS / Linux (mido)
 pip install mido python-rtmidi
-python3 -m modalpatcher.flash_mido --dir ./out --pace-ms 20
+python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
 ```
 
 The unit reboots when all three components are accepted. **Do not unplug during the flash.**
@@ -93,9 +93,9 @@ The unit reboots when all three components are accepted. **Do not unplug during 
 ### Windows
 
 * The **patcher is pure standard library** and runs on Windows as‑is, e.g.
-  `py -m modalpatcher.patcher --patches patches\carbon8_1-1_to_cobalt8.json --from path\to\firmware --out .\out`.
+  `py -m crossflash8.patcher --patches patches\carbon8_1-1_to_cobalt8.json --from path\to\firmware --out .\out`.
 * For **flashing**, use the cross‑platform backend (the ALSA one is Linux‑only):
-  `py -m pip install mido python-rtmidi` then `py -m modalpatcher.flash_mido --dir .\out`.
+  `py -m pip install mido python-rtmidi` then `py -m crossflash8.flash_mido --dir .\out`.
 * `python-rtmidi` currently ships **prebuilt Windows wheels for Python 3.8–3.12**; use one of
   those (e.g. Python 3.12) so **no compiler is needed**. On 3.13+/3.14 there is no wheel yet.
 * The synth shows up as a `CARBON8` / `COBALT8` / `ARGON8` … MIDI port; put it in update mode
@@ -127,7 +127,7 @@ model, so the update path and recovery are unaffected.
 ## Repository layout
 
 ```
-modalpatcher/
+crossflash8/
   syx.py          # .syx packet split/join, 7-bit pack/unpack, integrity re-seal
   patcher.py      # SHA-256-gated patcher (applies patches/*.json)
   flash_alsa.py   # Linux USB-MIDI flasher (ALSA rawmidi)

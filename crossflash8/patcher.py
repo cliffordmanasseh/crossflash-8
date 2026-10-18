@@ -4,7 +4,7 @@ Nothing copyrighted is shipped with this tool: the user points it at the officia
 firmware they already have, the tool verifies the SHA-256, edits a handful of
 bytes, re-seals the affected packet, and writes a flashable set.
 
-    python -m modalpatcher.patcher \
+    python -m crossflash8.patcher \
         --patches patches/carbon8_1-1_to_cobalt8.json \
         --from ~/Downloads/carbon8_firmware \
         --out  ./out
