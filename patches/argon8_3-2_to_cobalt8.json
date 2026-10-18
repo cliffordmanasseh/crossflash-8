@@ -1,0 +1,45 @@
+{
+  "format": "crossflash-8-patch/1",
+  "description": "Make official Modal Argon 8 firmware boot on a Cobalt 8 (model id 0x19) unit.",
+  "provenance": {
+    "source_images": "Official Modal Electronics firmware files, supplied by the user. Not included in this repository and not obtainable through it.",
+    "verified_on": "Cobalt 8 / 8X hardware, bootloader report model 0x19",
+    "confirmed": "NOT YET CONFIRMED ON HARDWARE. Gate located by static analysis (same method as carbon8_1-1_to_cobalt8); flash at your own risk."
+  },
+  "target_model_byte": 25,
+  "target_model_name": "Cobalt8 (0x19)",
+  "files": [
+    {
+      "role": "panel",
+      "filename": "Argon8_panel_3-2.syx",
+      "sha256": "cde5690d14ca117e1b86dff32a06b1e74a8ec6e4c34b7f0c95db4b5e41b5f4cb",
+      "edits": [
+        {
+          "data_packet": 1310,
+          "payload_index": 68,
+          "value": 25,
+          "reseal": true,
+          "what": "cmp r3,#0xff -> cmp r3,#0x19  (model gate). clean VMA 0x438F3C, base 0x410000. Argon 3-2 gate compares the unit model byte (ldrb r3,[r4,#0xc], r4=0x20005A50) against #0xff; on mismatch it sets flags 0x20009FFC/0x20005A4F and the boot splash (literal pool 0x41C388) prints 'Incorrect Firmware (%02Xh)'. Patching the immediate to 0x19 makes the Argon panel accept a Cobalt unit."
+        }
+      ]
+    },
+    {
+      "role": "master",
+      "filename": "Argon8_master_3-2.syx",
+      "sha256": "dc952bead8e06d78e7453066140c07eaf71951408615f243d7d972757b908a83",
+      "edits": []
+    },
+    {
+      "role": "slave",
+      "filename": "Argon8_slave_3-2.syx",
+      "sha256": "c2d66867bb6aac5e126477cb3581d255b690d8b0ed4d1ce622154c371257f797",
+      "edits": []
+    }
+  ],
+  "notes": [
+    "Only the packet model byte is changed on master/slave; their payloads are untouched (no model self-check strings found in either image).",
+    "The single meaningful engineering change is one instruction (the model gate compare immediate) in the panel image: 0xff -> 0x19.",
+    "Unlike Carbon 1-1 (cmp r3,#0x1d) and Cobalt 2-1 (cmp r3,#0x19), the Argon 3-2 gate compares against 0xff; the patch is otherwise identical in structure.",
+    "Argon 8 firmware revision 3-2 only; other revisions have a different layout and are deliberately refused by the SHA-256 gate."
+  ]
+}

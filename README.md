@@ -13,7 +13,7 @@ No `.syx`/`.bin` firmware is included, and none ever needs to be.
 | | |
 |---|---|
 | **host OS** | **Linux only.** The ALSA backend is what was exercised end to end; the `mido` path for macOS/Windows is provided but **untested against hardware**. |
-| **models** | **Carbon 8 `1-1` firmware on a Cobalt 8**, only. Cobalt 8X is untested; Argon 8 is not implemented at all. |
+| **models** | **Carbon 8 `1-1` firmware on a Cobalt 8** — verified. **Argon 8 `3-2` on a Cobalt 8** — patch included, **not yet verified on hardware**. Cobalt 8X is untested. |
 | **result** | a Cobalt 8 accepted all three components on the first pass (**~3½ minutes**) and booted running Carbon 8 firmware. |
 
 Only the three application components are ever written — the bootloader is never touched.
@@ -41,13 +41,18 @@ Only the three application components are ever written — the bootloader is nev
 
 | component | change |
 |---|---|
-| panel | packet **model byte** `0x1D → 0x19` on every packet, **plus one instruction**: `cmp r3,#0x1d → cmp r3,#0x19` (the model gate), then the packet is re‑sealed |
+| panel | packet **model byte** `0x1D → 0x19` (Carbon) / `0x18 → 0x19` (Argon) on every packet, **plus one instruction**: the model‑gate compare immediate, then the packet is re‑sealed |
 | master | packet **model byte** only (payload untouched) |
 | slave | packet **model byte** only (payload untouched) |
 
 The model byte goes to `0x19` because the Cobalt bootloader requires it. The single panel
 instruction is the firmware's own "does the unit's model match my model?" check; patching it
-makes the Carbon panel accept a `0x19` unit.
+makes the source panel accept a `0x19` unit. Per source firmware the gate looks like:
+
+| source | gate instruction (panel) | patched to |
+|---|---|---|
+| Carbon 8 `1-1` | `cmp r3,#0x1d` (VMA `0x437EDA`) | `cmp r3,#0x19` |
+| Argon 8 `3-2` | `cmp r3,#0xff` (VMA `0x438F3C`) | `cmp r3,#0x19` |
 
 ---
 
@@ -65,8 +70,8 @@ The project supports exactly the releases named in `patches/` and **refuses ever
 that bypasses encryption or signatures — see [`docs/SCOPE.md`](docs/SCOPE.md) for the design
 notes.
 
-Supported here: **the source firmware revision listed in the patch file** (currently Carbon 8
-`1-1`). Other revisions have a different layout and are deliberately refused.
+Supported here: **the source firmware revisions listed in `patches/`** (currently Carbon 8
+`1-1` and Argon 8 `3-2`). Other revisions have a different layout and are deliberately refused.
 
 
 ---
@@ -85,7 +90,9 @@ python3 -m crossflash8.patcher \
     --out ./out
 ```
 
-`out/` now holds a flashable set (`Carbon8_panel_1-1.syx`, `Carbon8_master_1-1.syx`,
+(or `patches/argon8_3-2_to_cobalt8.json` for Argon 8 `3-2` source files).
+
+`out/` now holds a flashable set (e.g. `Carbon8_panel_1-1.syx`, `Carbon8_master_1-1.syx`,
 `Carbon8_slave_1-1.syx`).
 
 Put the synth into update mode (**power on holding SHIFT/INIT** → *"UPDATE / waiting for
@@ -149,6 +156,7 @@ crossflash8/
   flash_mido.py   # cross-platform flasher (mido + python-rtmidi)
 patches/
   carbon8_1-1_to_cobalt8.json
+  argon8_3-2_to_cobalt8.json
 docs/
   USING.md        # complete operational guide: setup -> patch -> flash -> verify -> recover
   SCOPE.md        # what the project is, and what it will never include
@@ -158,10 +166,14 @@ LICENSE
 
 ## Adding other models
 
-The same recipe applies to Argon 8 (its panel's gate compares against its own model id).
-To add one: build a patch that sets the model byte to the target unit's id and flips that
-build's gate instruction to match, verify on hardware, then add a JSON entry with the
-source file's SHA‑256. Worked example: `patches/carbon8_1-1_to_cobalt8.json`.
+The recipe is the same for every 8‑series model: set the packet model byte to the target
+unit's id and flip the source panel's model‑gate compare immediate to match. The gate is
+found by locating the `Incorrect Firmware (%02Xh)` splash strings, the flag literal they
+read, and the single function that sets that flag after reading the unit's model byte
+(`ldrb` from the master‑link struct). Worked examples:
+`patches/carbon8_1-1_to_cobalt8.json` (verified) and `patches/argon8_3-2_to_cobalt8.json`
+(static analysis only — hardware confirmation pending). To add a revision: locate its gate,
+verify on hardware, then add a JSON entry with the source files' SHA‑256.
 
 ## Technical notes (for contributors)
 

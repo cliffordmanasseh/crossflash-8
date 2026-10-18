@@ -19,6 +19,7 @@ git clone <this repo> && cd crossflash-8
 python3 -m crossflash8.patcher \
     --patches patches/carbon8_1-1_to_cobalt8.json \
     --from /path/to/your/official/syx --out ./out
+#    (or patches/argon8_3-2_to_cobalt8.json for Argon 8 3-2 source files)
 
 # 2. power the synth OFF, hold SHIFT/INIT, power ON
 #    screen should read:  UPDATE / waiting for MODALapp connection
@@ -36,7 +37,7 @@ The rest of this document explains those steps, and how to tell success from fai
 
 | | |
 |---|---|
-| **verified so far** | **Linux host + Cobalt 8 unit + Carbon 8 `1‑1` firmware.** Every other combination (macOS/Windows host, Cobalt 8X, Argon 8) is **untested** — see §2 |
+| **verified so far** | **Linux host + Cobalt 8 unit + Carbon 8 `1‑1` firmware.** The Argon 8 `3‑2` patch is included but **not yet flashed on hardware**; every other combination (macOS/Windows host, Cobalt 8X) is **untested** — see §2 |
 | **the synth** | the target unit — e.g. a Cobalt 8 / 8X |
 | **USB cable** | a **data** cable (not charge‑only); a direct port is preferred over an unpowered hub |
 | **computer** | Linux, macOS or Windows |
@@ -57,7 +58,8 @@ The rest of this document explains those steps, and how to tell success from fai
 > **Scope of what has actually been tested.** Only the **Linux/ALSA** backend has been run
 > against a real unit, and only with **Carbon 8 `1‑1` firmware on a Cobalt 8** (see §1). The
 > `mido` backend shares the same protocol implementation but has **not** been exercised on
-> hardware yet, and no other model combination has been tried — treat those as unproven.
+> hardware yet, and the Argon 8 `3‑2` patch — while built by the same verified method — has
+> **not** been flashed yet — treat those as unproven.
 
 The **patcher is standard‑library only** and identical on all three platforms. Only the flasher
 differs: Linux can talk to `/dev/snd/midi*` directly, so it needs nothing; macOS and Windows go
@@ -179,6 +181,18 @@ done. out/ contains a flashable set (panel, master, slave).
 
 `out/` now holds the three files the flasher serves. **`out/` is git‑ignored** — keep it that
 way; never commit patched (or original) firmware anywhere.
+
+With the Argon patch (`patches/argon8_3-2_to_cobalt8.json` + Argon 8 `3-2` files) the only
+payload edit is the Argon panel's gate immediate:
+
+```
+panel : packet 1310 payload[68] 0x7f -> 0x19  (cmp r3,#0xff -> cmp r3,#0x19  (model gate). clean VMA 0x438F3C)
+panel : wrote ./out/Argon8_panel_3-2.syx
+master: set model byte on 3809 packets -> 0x19
+master: wrote ./out/Argon8_master_3-2.syx
+slave : set model byte on 4408 packets -> 0x19
+slave : wrote ./out/Argon8_slave_3-2.syx
+```
 
 ### The SHA‑256 gate
 
