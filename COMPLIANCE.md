@@ -89,6 +89,26 @@ Notes:
   no vendor code, patch‑only, user‑supplied files, SHA‑256‑gated.
 
 
+## Official availability of the firmware (checked 2026-10-18)
+
+* Officially, the vendor directs users to update **via its companion app**; the product pages
+  have a "Firmware — update via <app>" line and there is **no standalone firmware download
+  page**.
+* In practice the vendor **hosts the official `.syx` files on its own update server and serves
+  them publicly and unauthenticated** (the files respond `200` with matching sizes; only the
+  server's directory listing is blocked). This is the same endpoint the companion app uses.
+
+Consequences for this project's posture:
+
+* Provenance is as clean as it gets: users obtain the **genuine, vendor‑served** files, not a
+  third‑party mirror, so *acquisition* is not an unauthorised‑copying act.
+* Downloading from the vendor is not the same as being licensed to run it on other hardware;
+  that remains subject to (absent) licence terms and statutory copyright, as analysed above.
+* This repository still ships **no** firmware, and deliberately contains **no** endpoint URLs
+  or acquisition tooling, so it does not function as a distribution channel.
+
+
+
 ## If you receive a complaint
 
 There is nothing infringing to remove (no vendor code). The reasonable response is to
