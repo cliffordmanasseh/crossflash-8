@@ -90,6 +90,18 @@ python3 -m modalpatcher.flash_mido --dir ./out --pace-ms 20
 
 The unit reboots when all three components are accepted. **Do not unplug during the flash.**
 
+### Windows
+
+* The **patcher is pure standard library** and runs on Windows as‑is, e.g.
+  `py -m modalpatcher.patcher --patches patches\carbon8_1-1_to_cobalt8.json --from path\to\firmware --out .\out`.
+* For **flashing**, use the cross‑platform backend (the ALSA one is Linux‑only):
+  `py -m pip install mido python-rtmidi` then `py -m modalpatcher.flash_mido --dir .\out`.
+* `python-rtmidi` currently ships **prebuilt Windows wheels for Python 3.8–3.12**; use one of
+  those (e.g. Python 3.12) so **no compiler is needed**. On 3.13+/3.14 there is no wheel yet.
+* The synth shows up as a `CARBON8` / `COBALT8` / `ARGON8` … MIDI port; put it in update mode
+  first, and make sure no other MIDI app (or the vendor app) has the port open.
+
+
 ### Troubleshooting
 
 * **"missed firmware start packet" / timeouts** — this is usually pacing/hand‑off, not the
