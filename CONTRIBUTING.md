@@ -19,6 +19,9 @@ git config core.hooksPath .githooks     # enables the pre-commit firmware guard
 python3 tools/check_no_firmware.py      # run manually any time
 ```
 
+For the full end-user walkthrough (environment setup, patching, flashing, verification,
+troubleshooting), see [`docs/USING.md`](docs/USING.md).
+
 ## Adding support for another model
 
 1. Obtain the official source firmware **you are entitled to use** (do not add it here).

@@ -65,6 +65,10 @@ Supported here: **the source firmware revision listed in the patch file** (curre
 
 ## Usage
 
+**New to this? [`docs/USING.md`](docs/USING.md) is the complete guide** — per‑OS environment
+setup, pre‑flight checks, entering update mode, reading the flasher's output line by line,
+verification, troubleshooting and recovery. The short version:
+
 ```bash
 git clone <this repo> && cd crossflash-8
 python3 -m crossflash8.patcher \
@@ -134,6 +138,8 @@ crossflash8/
   flash_mido.py   # cross-platform flasher (mido + python-rtmidi)
 patches/
   carbon8_1-1_to_cobalt8.json
+docs/
+  USING.md        # complete operational guide: setup -> patch -> flash -> verify -> recover
 DISCLAIMER.md
 LICENSE
 ```
