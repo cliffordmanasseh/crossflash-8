@@ -1,0 +1,44 @@
+{
+  "format": "modal-crossflash-patch/1",
+  "description": "Make official Modal Carbon 8 firmware boot on a Cobalt 8 (model id 0x19) unit.",
+  "provenance": {
+    "source_images": "Official Modal Electronics firmware, downloaded from Modal's public update server (the same files MODALapp fetches). Not included in this repository.",
+    "verified_on": "Cobalt 8 / 8X hardware, bootloader report model 0x19",
+    "confirmed": "Carbon 8 boots after applying this patch set (2026-10-18)"
+  },
+  "target_model_byte": 25,
+  "target_model_name": "Cobalt8 (0x19)",
+  "files": [
+    {
+      "role": "panel",
+      "filename": "Carbon8_panel_1-1.syx",
+      "sha256": "2fa49b6482395d28b985ad40acb8607a4d7c9510f070a76223892cc30ea771de",
+      "edits": [
+        {
+          "data_packet": 1277,
+          "payload_index": 102,
+          "value": 25,
+          "reseal": true,
+          "what": "cmp r3,#0x1d -> cmp r3,#0x19  (model gate). clean VMA 0x437EDA, padded VMA 0x42A1C5"
+        }
+      ]
+    },
+    {
+      "role": "master",
+      "filename": "Carbon8_master_1-1.syx",
+      "sha256": "24db527977d232f79466292cb40ff60461e406040e673d385da1739f8484d12b",
+      "edits": []
+    },
+    {
+      "role": "slave",
+      "filename": "Carbon8_slave_1-1.syx",
+      "sha256": "073babb693d7b50d50285b98a8721dc9da3d48e1abdb2109c2980c80459059aa",
+      "edits": []
+    }
+  ],
+  "notes": [
+    "Only the packet model byte is changed on master/slave; their payloads are untouched.",
+    "The single meaningful engineering change is one instruction (the model gate compare) in the panel image.",
+    "Firmware revision 1-2 and other revisions have different layout/offsets and are NOT supported by this patch file."
+  ]
+}

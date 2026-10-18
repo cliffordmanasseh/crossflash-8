@@ -1,0 +1,10 @@
+# NEVER commit firmware or anything derived from it
+out/
+*.syx
+*.bin
+*.syx.patched
+
+# python
+__pycache__/
+*.pyc
+.venv/
