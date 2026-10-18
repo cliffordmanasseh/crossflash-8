@@ -6,7 +6,7 @@ bytes, re-seals the affected packet, and writes a flashable set.
 
     python -m crossflash8.patcher \
         --patches patches/carbon8_1-1_to_cobalt8.json \
-        --from ~/Downloads/carbon8_firmware \
+        --from /path/to/carbon8_firmware \
         --out  ./out
 """
 from __future__ import annotations

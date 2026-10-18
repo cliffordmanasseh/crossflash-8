@@ -1,11 +1,17 @@
 # crossflash-8
 
-Run **Carbon 8** (and, by the same technique, **Argon 8**) firmware on a **Cobalt 8 / 8X**
-unit over USB‑MIDI — **without shipping a single byte of Modal Electronics' firmware**.
+Run **Carbon 8** firmware on a **Cobalt 8 / 8X** unit over USB‑MIDI — **without shipping a
+single byte of Modal Electronics' firmware**. The same technique extends to the other 8‑series
+models (see *Adding other models*).
 
 This repository contains **only tooling**: a patcher that applies a handful of byte edits
 to firmware files *you* already have, and a flasher that talks to the synth's bootloader.
 No `.syx`/`.bin` firmware is included, and none ever needs to be.
+
+**Status: verified on hardware.** The Carbon 8 `1-1` patch was built with this patcher and
+flashed with this flasher; a Cobalt 8 accepted all three components on the first pass
+(~3½ minutes) and booted running Carbon 8 firmware. Only the three application components are
+ever written — the bootloader is never touched.
 
 ---
 
@@ -70,7 +76,7 @@ verification, troubleshooting and recovery. The short version:
 git clone <this repo> && cd crossflash-8
 python3 -m crossflash8.patcher \
     --patches patches/carbon8_1-1_to_cobalt8.json \
-    --from ~/Downloads/carbon8_firmware \
+    --from /path/to/carbon8_firmware \
     --out ./out
 ```
 

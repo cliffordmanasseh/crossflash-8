@@ -357,7 +357,7 @@ If the unit boots and plays, you're done. If it doesn't, see below — it is rec
 | flasher exits non‑zero, `served` is missing a component | incomplete run (port contention, hub glitch) | re‑enter update mode and run it again; partial writes are simply overwritten |
 | `Permission denied` opening `/dev/snd/midi…` (Linux) | user lacks device access | see §3.2 — `audio` group / udev rule |
 | port won't open on Windows | another process holds the MIDI port | close the vendor app, DAWs, and any MIDI monitors |
-| flash interrupted, unit won't boot | the write didn't finish | the bootloader is untouched: power on holding SHIFT/INIT and flash again (§10) |
+| flash interrupted, unit won't boot | the write didn't finish | the bootloader is untouched: power on holding SHIFT/INIT and flash again (§10–§11) |
 
 Nothing in this list requires a special recovery tool. The worst case is always "put it back into
 update mode and flash again".
