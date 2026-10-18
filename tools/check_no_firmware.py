@@ -69,7 +69,7 @@ def main() -> int:
         print("FIRMWARE GUARD: refusing — firmware must never be committed:\n")
         for p in sorted(set(problems)):
             print("  " + p)
-        print("\nSee COMPLIANCE.md. Remove these files and try again.")
+        print("\nSee docs/SCOPE.md. Remove these files and try again.")
         return 1
     print("firmware guard: OK (no firmware blobs found)")
     return 0

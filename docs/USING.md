@@ -5,8 +5,8 @@ entering update mode, performing the flash, verifying it, recovering from proble
 reference details behind the commands.
 
 **Deliberately not covered: how to obtain firmware.** This project ships none and provides no
-acquisition path. You must already possess the official source‑model files in a way that is
-lawful for you (see *Read this first* in the [README](../README.md)).
+acquisition path. You must already have the official source‑model files (see *Read this first*
+in the [README](../README.md)).
 
 ---
 
@@ -40,7 +40,7 @@ The rest of this document explains those steps, and how to tell success from fai
 | **USB cable** | a **data** cable (not charge‑only); a direct port is preferred over an unpowered hub |
 | **computer** | Linux, macOS or Windows |
 | **Python** | **3.8 or newer** — see §3 for the recommended version per OS |
-| **firmware** | the **official source‑model** `.syx` files you already lawfully possess: three files for the same revision, named like `..._panel_...syx`, `..._master_...syx`, `..._slave_...syx` |
+| **firmware** | the **official source‑model** `.syx` files you already have: three files for the same revision, named like `..._panel_...syx`, `..._master_...syx`, `..._slave_...syx` |
 | **time** | ~10 minutes. The flash itself is **3–4 minutes** of uninterrupted power and USB |
 
 ---

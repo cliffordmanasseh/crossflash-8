@@ -9,8 +9,8 @@ Thanks for helping. There is **one hard rule**: **never commit firmware.**
   images, generated source from vendor images).
 * Downloaders, firmware URLs for other products, keys, or DRM/signature bypasses.
 
-See `COMPLIANCE.md` for the reasoning. Pull requests that add any of the above will be
-closed.
+See [`docs/SCOPE.md`](docs/SCOPE.md) for the reasoning. Pull requests that add any of the above
+will be closed.
 
 ## Setup
 
@@ -24,7 +24,7 @@ troubleshooting), see [`docs/USING.md`](docs/USING.md).
 
 ## Adding support for another model
 
-1. Obtain the official source firmware **you are entitled to use** (do not add it here).
+1. Obtain your own official source firmware (do not add it here).
 2. Determine the byte edits (model/identity field + that build's compatibility-gate
    instruction / table entry). See `patches/carbon8_1-1_to_cobalt8.json` for the shape.
 3. Record the source file's **SHA‑256** and the edits as a new JSON in `patches/`.

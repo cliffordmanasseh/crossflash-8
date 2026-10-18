@@ -1,6 +1,6 @@
 """Apply a cross-flash patch to *user-supplied* official Modal .syx files.
 
-Nothing copyrighted is shipped with this tool: the user points it at the official
+No vendor firmware ships with this tool: the user points it at the official
 firmware they already have, the tool verifies the SHA-256, edits a handful of
 bytes, re-seals the affected packet, and writes a flashable set.
 
