@@ -49,9 +49,10 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
     served: set[int] = set()
     runs: dict[int, int] = {}
     pending = None
+    saw_hello = False
 
     def handle(msg) -> None:
-        nonlocal pending
+        nonlocal pending, saw_hello
         if msg.type != "sysex":
             return
         m = _sysex(msg)
@@ -59,6 +60,8 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
         print(f"[{t:7.1f}] dev {m.hex(' ').upper()}")
         if len(m) >= 7 and m[5] == 0x7C:
             pending = m[6]
+        elif len(m) >= 7 and m[5] == 0x01 and m[6] == 0x7D:
+            saw_hello = True
         elif len(m) >= 8 and m[5] == 0x7D:
             print(f"        DEVICE ERROR {m[6]} (state {m[7]})")
 
@@ -71,8 +74,20 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
             time.sleep(pace)
 
     with mido.open_ioport(name) as port:
-        port.send(mido.Message("sysex", data=IDENTIFY))
-        time.sleep(1.0)
+        for _ in range(6):                       # identify + confirm update mode
+            port.send(mido.Message("sysex", data=IDENTIFY))
+            t_end = time.time() + 0.5
+            while time.time() < t_end:
+                for msg in port.iter_pending():
+                    handle(msg)
+                time.sleep(0.02)
+            if saw_hello:
+                break
+        if not saw_hello:
+            sys.exit("device did not answer the update handshake — put it in UPDATE mode "
+                     "(power on holding SHIFT/INIT until it says 'waiting for MODALapp "
+                     "connection') and retry")
+        print("device is in update mode")
         port.send(mido.Message("sysex", data=[0x00, 0x21, 0x07, MODEL, 0x01, 0x04, 0x01]))
         deadline = time.time() + total
         while time.time() < deadline and len(served) < len(images):
@@ -89,6 +104,8 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
 
 
 def main(argv=None) -> int:
+    if hasattr(sys.stdout, "reconfigure"):        # progress is visible when piped/logged
+        sys.stdout.reconfigure(line_buffering=True)
     ap = argparse.ArgumentParser(description="Flash a patched Modal set over USB-MIDI (mido)")
     ap.add_argument("--dir", required=True)
     ap.add_argument("--pace-ms", type=float, default=20.0)

@@ -164,7 +164,7 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
 
     port = find_port()
     if not port:
-        sys.exit("no COBALT sound card found; is the synth in UPDATE mode?")
+        sys.exit("no Modal 8-series sound card found; is the synth connected and in UPDATE mode?")
     node = node_for(port)
     print(f"port {port} ({node})")
     fd = os.open(node, os.O_RDWR | os.O_NONBLOCK)
@@ -196,6 +196,8 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
 
 
 def main(argv=None) -> int:
+    if hasattr(sys.stdout, "reconfigure"):        # progress is visible when piped/logged
+        sys.stdout.reconfigure(line_buffering=True)
     ap = argparse.ArgumentParser(description="Flash a patched Modal set over USB-MIDI (Linux/ALSA)")
     ap.add_argument("--dir", required=True)
     ap.add_argument("--pace-ms", type=float, default=20.0)
