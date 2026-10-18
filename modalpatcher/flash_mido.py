@@ -37,9 +37,8 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
             sys.exit(f"no {role} .syx in {src}")
         images[t] = [bytes(p) for p in syx.split_packets(open(os.path.join(src, fn), "rb").read())]
 
-    names = [n for n in mido.get_ioport_names() if "COBALT" in n.upper()]
-    if not names:
-        names = [n for n in mido.get_ioport_names() if "MODAL" in n.upper()]
+    names = [n for n in mido.get_ioport_names()
+             if any(w in n.upper() for w in ("CARBON", "COBALT", "ARGON", "MODAL"))]
     if not names:
         sys.exit("no COBALT MIDI port found; is the synth in UPDATE mode?")
     name = names[0]

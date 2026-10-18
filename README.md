@@ -105,6 +105,11 @@ The **bootloader is never modified**, so recovery is the same procedure with the
 Cobalt set: put the unit in update mode and serve `Cobalt8_panel/master/slave` (headers
 `0x19`, no edits). Nothing in this repo is needed to go back.
 
+Note on identity: while the patched firmware is **running**, the unit presents as the
+cross‑flashed model (its USB‑audio card name and its reported model byte both change), which
+is what the companion app sees. The **bootloader** (update mode) still presents the stock
+model, so the update path and recovery are unaffected.
+
 ---
 
 ## Repository layout

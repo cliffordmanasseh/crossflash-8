@@ -41,11 +41,12 @@ def _cards() -> dict[int, str]:
 
 
 def find_port() -> str | None:
+    """Any Modal 8-series USB-MIDI card.  The bootloader (update mode) presents as the
+    stock product name; the running application presents as its own (possibly
+    cross-flashed) name, so match all of them."""
+    want = ("CARBON", "COBALT", "ARGON", "MODAL")
     for idx, desc in _cards().items():
-        if "COBALT" in desc.upper():
-            return f"hw:{idx},0,0"
-    for idx, desc in _cards().items():
-        if "MODAL" in desc.upper() or "ARGON" in desc.upper():
+        if any(w in desc.upper() for w in want):
             return f"hw:{idx},0,0"
     return None
 
@@ -77,6 +78,7 @@ class Session:
         self.served: set[int] = set()
         self.runs: dict[int, int] = {}
         self.pending: int | None = None
+        self.saw_hello = False
 
     def feeds(self, data: bytes):
         self.buf += data
@@ -116,6 +118,8 @@ class Session:
             print(f"[{t:7.1f}] dev {m.hex(' ').upper()}")
             if len(m) >= 7 and m[5] == 0x7C:
                 self.pending = m[6]
+            elif len(m) >= 7 and m[5] == 0x01 and m[6] == 0x7D:
+                self.saw_hello = True
             elif len(m) >= 8 and m[5] == 0x7D:
                 print(f"        DEVICE ERROR {m[6]} (state {m[7]})")
             elif len(m) >= 7 and m[5] == 0x01 and m[6] == 0x02:
@@ -166,8 +170,16 @@ def flash(src: str, pace_ms: float = 20.0, total: float = 600.0) -> int:
     fd = os.open(node, os.O_RDWR | os.O_NONBLOCK)
     try:
         s = Session(fd, images, pace_ms)
-        wwrite(fd, IDENTIFY)
-        s.pump(2.0)
+        for _ in range(5):                       # identify + confirm update mode
+            wwrite(fd, IDENTIFY)
+            s.pump(0.5)
+            if s.saw_hello:
+                break
+        if not s.saw_hello:
+            sys.exit("device did not answer the update handshake — put it in UPDATE mode "
+                     "(power on holding SHIFT/INIT until it says 'waiting for MODALapp "
+                     "connection') and retry")
+        print("device is in update mode")
         wwrite(fd, bytes([0xF0, 0x00, 0x21, 0x07, MODEL, 0x01, 0x04, 0x01, 0xF7]))
         deadline = time.time() + total
         while time.time() < deadline and len(s.served) < len(images):
