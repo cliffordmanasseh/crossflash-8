@@ -32,7 +32,7 @@ def tracked_files() -> list[str]:
 def walk(root: str) -> list[str]:
     found = []
     for base, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.endswith("_firmware")]
         for f in files:
             found.append(os.path.join(base, f))
     return found

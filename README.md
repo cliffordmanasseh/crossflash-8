@@ -176,7 +176,7 @@ found by locating the `Incorrect Firmware (%02Xh)` splash strings, the flag lite
 read, and the single function that sets that flag after reading the unit's model byte
 (`ldrb` from the master‑link struct). Worked examples:
 `patches/carbon8_1-1_to_cobalt8.json` (verified) and `patches/argon8_3-2_to_cobalt8.json`
-(static analysis only — hardware confirmation pending). To add a revision: locate its gate,
+(verified). To add a revision: locate its gate,
 verify on hardware, then add a JSON entry with the source files' SHA‑256.
 
 ## Technical notes (for contributors)
