@@ -8,13 +8,13 @@ This repository contains **only tooling**: a patcher that applies a handful of b
 to firmware files *you* already have, and a flasher that talks to the synth's bootloader.
 No `.syx`/`.bin` firmware is included, and none ever needs to be.
 
-**Status: verified on hardware — in exactly one configuration so far.**
+**Status: verified on hardware — in two configurations.**
 
 | | |
 |---|---|
 | **host OS** | **Linux only.** The ALSA backend is what was exercised end to end; the `mido` path for macOS/Windows is provided but **untested against hardware**. |
-| **models** | **Carbon 8 `1-1` firmware on a Cobalt 8** — verified. **Argon 8 `3-2` on a Cobalt 8** — patch included, **not yet verified on hardware**. Cobalt 8X is untested. |
-| **result** | a Cobalt 8 accepted all three components on the first pass (**~3½ minutes**) and booted running Carbon 8 firmware. |
+| **models** | **Carbon 8 `1-1` on Cobalt 8** — verified. **Argon 8 `3-2` on Cobalt 8** — verified. Cobalt 8X is untested. |
+| **result** | a Cobalt 8 accepted all three components on the first pass (**~3½ minutes**) and booted running Carbon 8 or Argon 8 firmware. |
 
 Only the three application components are ever written — the bootloader is never touched.
 
@@ -26,7 +26,7 @@ Only the three application components are ever written — the bootloader is nev
   endorsed by Modal Electronics.
 * **You must supply your own official firmware.** This repo ships no firmware. The patcher
   verifies the SHA‑256 of your file and refuses anything it wasn't built for.
-* The patch is **tiny**: one header field on every packet plus **one instruction**. It contains
+* The patch is **tiny**: one header field on every packet plus **one instruction** (and automatic protocol reframing where needed). It contains
   no Modal source or significant code.
 * The work was done for **interoperability**, from **unencrypted** `.syx` files (plain MIDI
   SysEx, a non‑cryptographic checksum, no signature). Nothing cryptographic was bypassed.
@@ -45,14 +45,18 @@ Only the three application components are ever written — the bootloader is nev
 | master | packet **model byte** only (payload untouched) |
 | slave | packet **model byte** only (payload untouched) |
 
-The model byte goes to `0x19` because the Cobalt bootloader requires it. The single panel
-instruction is the firmware's own "does the unit's model match my model?" check; patching it
-makes the source panel accept a `0x19` unit. Per source firmware the gate looks like:
+The model byte goes to `0x19` because the Cobalt bootloader requires it.
 
-| source | gate instruction (panel) | patched to |
-|---|---|---|
-| Carbon 8 `1-1` | `cmp r3,#0x1d` (VMA `0x437EDA`) | `cmp r3,#0x19` |
-| Argon 8 `3-2` | `cmp r3,#0xff` (VMA `0x438F3C`) | `cmp r3,#0x19` |
+### Protocol reframing (Argon 8)
+Official Argon 8 v3.2 firmware uses Modal's legacy **165-byte SysEx data packet format** with an 8-bit checksum. The Cobalt 8 bootloader strictly expects modern **167-byte SysEx packets** with a 16-bit checksum (as used in Cobalt 8 and Carbon 8). When patching Argon 8 for Cobalt 8, `patcher.py` automatically reframes every data packet to the 167-byte format and recalculates the full 16-bit integrity value so the Cobalt bootloader accepts all three components without stalling.
+
+### The panel model gate
+The single panel instruction is the firmware's own "does the unit's model match my model?" check; patching it makes the source panel accept a `0x19` unit:
+
+| source | gate instruction (panel) | patched to | details |
+|---|---|---|---|
+| Carbon 8 `1-1` | `cmp r3,#0x1d` (VMA `0x437EDA`) | `cmp r3,#0x19` | byte 102: `0x1D → 0x19` |
+| Argon 8 `3-2` | `cmp r3,#0xff` (VMA `0x438F3C`) | `cmp r3,#0x19` | byte 68: `0x7F → 0x19`, byte 71 (MSB bundle): `0x44 → 0x40` |
 
 ---
 

@@ -4,7 +4,7 @@
   "provenance": {
     "source_images": "Official Modal Electronics firmware files, supplied by the user. Not included in this repository and not obtainable through it.",
     "verified_on": "Cobalt 8 / 8X hardware, bootloader report model 0x19",
-    "confirmed": "NOT YET CONFIRMED ON HARDWARE. Gate located by static analysis (same method as carbon8_1-1_to_cobalt8); flash at your own risk."
+    "confirmed": "CONFIRMED ON HARDWARE. Cobalt 8 boots and runs Argon 8 v3.2 firmware (2026-10-19)."
   },
   "target_model_byte": 25,
   "target_model_name": "Cobalt8 (0x19)",

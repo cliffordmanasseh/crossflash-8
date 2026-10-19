@@ -37,7 +37,7 @@ The rest of this document explains those steps, and how to tell success from fai
 
 | | |
 |---|---|
-| **verified so far** | **Linux host + Cobalt 8 unit + Carbon 8 `1‑1` firmware.** The Argon 8 `3‑2` patch is included but **not yet flashed on hardware**; every other combination (macOS/Windows host, Cobalt 8X) is **untested** — see §2 |
+| **verified so far** | **Linux host + Cobalt 8 unit + Carbon 8 `1‑1` firmware** AND **Argon 8 `3‑2` firmware** — both verified on hardware. Every other combination (macOS/Windows host, Cobalt 8X) is **untested** — see §2 |
 | **the synth** | the target unit — e.g. a Cobalt 8 / 8X |
 | **USB cable** | a **data** cable (not charge‑only); a direct port is preferred over an unpowered hub |
 | **computer** | Linux, macOS or Windows |
@@ -55,11 +55,10 @@ The rest of this document explains those steps, and how to tell success from fai
 | **macOS** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` | untested |
 | **Windows** | `crossflash8.flash_mido` | `mido` + `python-rtmidi` | untested |
 
-> **Scope of what has actually been tested.** Only the **Linux/ALSA** backend has been run
-> against a real unit, and only with **Carbon 8 `1‑1` firmware on a Cobalt 8** (see §1). The
-> `mido` backend shares the same protocol implementation but has **not** been exercised on
-> hardware yet, and the Argon 8 `3‑2` patch — while built by the same verified method — has
-> **not** been flashed yet — treat those as unproven.
+> **Scope of what has actually been tested.** The **Linux/ALSA** backend has been run
+> against real hardware with both **Carbon 8 `1‑1`** and **Argon 8 `3‑2`** firmware on a
+> **Cobalt 8** (see §1). The `mido` backend shares the same protocol implementation but has
+> **not** been exercised on hardware yet — treat that as unproven.
 
 The **patcher is standard‑library only** and identical on all three platforms. Only the flasher
 differs: Linux can talk to `/dev/snd/midi*` directly, so it needs nothing; macOS and Windows go
