@@ -68,11 +68,20 @@ def packet_is_data(pkt: bytearray) -> bool:
 
 def reseal(pkt: bytearray) -> None:
     """Recompute and store the payload integrity value of a data packet."""
-    payload = bytearray(pkt[10:-2])
-    cs = sum(unpack(bytes(payload))) & 0xFF
-    payload[-1] = (payload[-1] & 0x70) | (cs & 0x0F)
-    pkt[10:-2] = payload
-    pkt[-2] = (cs >> 4) & 0x0F
+    payload = bytes(pkt[10:162])
+    unp = unpack(payload)
+    if len(pkt) == 167:
+        cs = sum(unp) & 0xFFFF
+        pkt[162] = (cs >> 8) & 0x0F
+        pkt[163] = (cs >> 12) & 0x0F
+        pkt[164] = cs & 0x0F
+        pkt[165] = (cs >> 4) & 0x0F
+    elif len(pkt) == 165:
+        cs = sum(unp) & 0xFF
+        pkt[162] = cs & 0x0F
+        pkt[163] = (cs >> 4) & 0x0F
+    else:
+        raise ValueError(f"unknown data packet length {len(pkt)}")
 
 
 def set_model_byte(packets: list[bytearray], model: int) -> int:
@@ -84,13 +93,49 @@ def set_model_byte(packets: list[bytearray], model: int) -> int:
     return n
 
 
+def reframe_to_modern(packets: list[bytearray], target_model: int = 0x19) -> list[bytearray]:
+    """Upgrade legacy 165-byte data packets (Argon) to modern 167-byte format with 16-bit checksum (Cobalt/Carbon)."""
+    out = []
+    for p in packets:
+        if packet_is_data(p) and len(p) == 165:
+            hdr = bytearray(p[:10])
+            hdr[4] = target_model
+            payload = bytearray(p[10:162])
+            unp = unpack(bytes(payload))
+            cs = sum(unp) & 0xFFFF
+            reframed = hdr + payload + bytearray([
+                (cs >> 8) & 0x0F,
+                (cs >> 12) & 0x0F,
+                cs & 0x0F,
+                (cs >> 4) & 0x0F,
+                0xF7,
+            ])
+            out.append(reframed)
+        else:
+            q = bytearray(p)
+            if len(q) > 4:
+                q[4] = target_model
+            out.append(q)
+    return out
+
+
 def verify_seals(packets: list[bytearray]) -> int:
     bad = 0
     for p in packets:
         if not packet_is_data(p):
             continue
-        payload = bytes(p[10:-2])
-        cs = sum(unpack(payload)) & 0xFF
-        if ((p[-2] << 4) | (payload[-1] & 0x0F)) & 0xFF != cs:
+        payload = bytes(p[10:162])
+        unp = unpack(payload)
+        if len(p) == 167:
+            cs = sum(unp) & 0xFFFF
+            expected = ((cs >> 8) & 0x0F, (cs >> 12) & 0x0F, cs & 0x0F, (cs >> 4) & 0x0F)
+            if (p[162], p[163], p[164], p[165]) != expected:
+                bad += 1
+        elif len(p) == 165:
+            cs = sum(unp) & 0xFF
+            expected = (cs & 0x0F, (cs >> 4) & 0x0F)
+            if (p[162], p[163]) != expected:
+                bad += 1
+        else:
             bad += 1
     return bad

@@ -47,8 +47,12 @@ def apply_file(src: str, spec: dict, out_dir: str) -> str:
 
     model = spec.get("model_byte")
     if model is not None:
-        n = syx.set_model_byte(packets, model)
-        print(f"  {spec['role']:6}: set model byte on {n} packets -> {model:#04x}")
+        if model == 0x19 and any(len(p) == 165 for p in packets if syx.packet_is_data(p)):
+            packets = syx.reframe_to_modern(packets, model)
+            print(f"  {spec['role']:6}: upgraded 165-byte legacy packets to 167-byte Cobalt format (model {model:#04x})")
+        else:
+            n = syx.set_model_byte(packets, model)
+            print(f"  {spec['role']:6}: set model byte on {n} packets -> {model:#04x}")
 
     data_idx = [i for i, p in enumerate(packets) if syx.packet_is_data(p)]
     for e in spec.get("edits", []):
@@ -56,11 +60,11 @@ def apply_file(src: str, spec: dict, out_dir: str) -> str:
         if dp >= len(data_idx):
             raise SystemExit(f"{spec['role']}: data packet {dp} out of range")
         p = packets[data_idx[dp]]
-        payload = bytearray(p[10:-2])
+        payload = bytearray(p[10:162])
         pidx = e["payload_index"]
         old = payload[pidx]
         payload[pidx] = e["value"]
-        p[10:-2] = payload
+        p[10:162] = payload
         if e.get("reseal", True):
             syx.reseal(p)
         print(f"  {spec['role']:6}: packet {dp} payload[{pidx}] "

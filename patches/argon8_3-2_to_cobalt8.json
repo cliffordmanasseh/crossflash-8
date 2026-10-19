@@ -18,8 +18,15 @@
           "data_packet": 1310,
           "payload_index": 68,
           "value": 25,
+          "reseal": false,
+          "what": "cmp r3,#0xff -> cmp r3,#0x19 (model gate operand low 7 bits)"
+        },
+        {
+          "data_packet": 1310,
+          "payload_index": 71,
+          "value": 64,
           "reseal": true,
-          "what": "cmp r3,#0xff -> cmp r3,#0x19  (model gate). clean VMA 0x438F3C, base 0x410000. Argon 3-2 gate compares the unit model byte (ldrb r3,[r4,#0xc], r4=0x20005A50) against #0xff; on mismatch it sets flags 0x20009FFC/0x20005A4F and the boot splash (literal pool 0x41C388) prints 'Incorrect Firmware (%02Xh)'. Patching the immediate to 0x19 makes the Argon panel accept a Cobalt unit."
+          "what": "cmp r3,#0xff -> cmp r3,#0x19 (clear bit 2 in MSB bundle byte so operand is 0x19, not 0x99)"
         }
       ]
     },
