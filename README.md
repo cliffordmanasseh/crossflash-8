@@ -84,34 +84,35 @@ Supported here: **the source firmware revisions listed in `patches/`** (currentl
 
 **New to this? [`docs/USING.md`](docs/USING.md) is the complete guide** — per‑OS environment
 setup, pre‑flight checks, entering update mode, reading the flasher's output line by line,
-verification, troubleshooting and recovery. The short version:
+verification, troubleshooting and recovery.
 
-```bash
-git clone <this repo> && cd crossflash-8
-python3 -m crossflash8.patcher \
-    --patches patches/carbon8_1-1_to_cobalt8.json \
-    --from /path/to/your/official/syx \
-    --out ./out
-```
+### TL;DR (3-Step Quickstart)
 
-(or `patches/argon8_3-2_to_cobalt8.json` for Argon 8 `3-2` source files).
+1. **Patch your official source firmware into `./out`:**
+   ```bash
+   # Argon 8 on Cobalt 8:
+   python3 -m crossflash8.patcher --patches patches/argon8_3-2_to_cobalt8.json --from /path/to/official/syx --out ./out
 
-`out/` now holds a flashable set (e.g. `Carbon8_panel_1-1.syx`, `Carbon8_master_1-1.syx`,
-`Carbon8_slave_1-1.syx`).
+   # Carbon 8 on Cobalt 8:
+   python3 -m crossflash8.patcher --patches patches/carbon8_1-1_to_cobalt8.json --from /path/to/official/syx --out ./out
+   ```
 
-Put the synth into update mode (**power on holding SHIFT/INIT** → *"UPDATE / waiting for
-MODALapp connection"*), then flash:
+2. **Put synth into UPDATE mode:**
+   * Power **OFF** the synth.
+   * Hold **SHIFT / INIT** and power **ON** (screen reads: `UPDATE / waiting for MODALapp connection`).
 
-```bash
-# Linux (ALSA, no extra deps)                       <- the path verified on hardware
-python3 -m crossflash8.flash_alsa --dir ./out --pace-ms 20
+3. **Flash over USB-MIDI:**
+   ```bash
+   # Linux (ALSA, no dependencies) — verified on hardware:
+   python3 -m crossflash8.flash_alsa --dir ./out --pace-ms 20
 
-# Windows / macOS / Linux (mido)                    <- untested on hardware so far
-pip install mido python-rtmidi
-python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
-```
+   # macOS / Windows (mido backend):
+   pip install mido python-rtmidi
+   python3 -m crossflash8.flash_mido --dir ./out --pace-ms 20
+   ```
+   Takes **~3½ minutes** total. The unit reboots itself automatically when all 3 components are written.
 
-The unit reboots when all three components are accepted. **Do not unplug during the flash.**
+To revert to stock Cobalt 8 at any time: put the synth into UPDATE mode (step 2) and serve your official unmodified Cobalt files (`python3 -m crossflash8.flash_alsa --dir /path/to/cobalt/syx --pace-ms 20`).
 
 ### Windows
 
