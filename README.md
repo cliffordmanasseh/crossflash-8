@@ -74,9 +74,6 @@ The project supports exactly the releases named in `patches/` and **refuses ever
 that bypasses encryption or signatures — see [`docs/SCOPE.md`](docs/SCOPE.md) for the design
 notes.
 
-Supported here: **the source firmware revisions listed in `patches/`** (currently Carbon 8
-`1-1` and Argon 8 `3-2`). Other revisions have a different layout and are deliberately refused.
-
 
 ---
 
@@ -179,12 +176,3 @@ read, and the single function that sets that flag after reading the unit's model
 `patches/carbon8_1-1_to_cobalt8.json` (verified) and `patches/argon8_3-2_to_cobalt8.json`
 (verified). To add a revision: locate its gate,
 verify on hardware, then add a JSON entry with the source files' SHA‑256.
-
-## Technical notes (for contributors)
-
-* The updated image is **not** a flat dump: the on‑wire payload keeps **128 image bytes per
-  135‑byte record** (7 framing bytes follow), and the app is linked at base **`0x00410000`**.
-  Knowing this is what makes the string/pointer tables resolve.
-* The per‑packet integrity value is a **non‑cryptographic** checksum of the payload; any
-  payload edit must re‑seal the packet (the patcher does this).
-* `20 ms` per message is required; `1 ms` fails with "missed firmware start packet".
