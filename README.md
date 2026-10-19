@@ -13,7 +13,7 @@ No `.syx`/`.bin` firmware is included, and none ever needs to be.
 | | |
 |---|---|
 | **host OS** | **Linux only.** The ALSA backend is what was exercised end to end; the `mido` path for macOS/Windows is provided but **untested against hardware**. |
-| **models** | **Carbon 8 `1-1` on Cobalt 8** — verified. **Argon 8 `3-2` on Cobalt 8** — verified. Cobalt 8X is untested. |
+| **models** | **Carbon 8 `1-1` on Cobalt 8** — verified. **Argon 8 `3-2` on Cobalt 8** — verified. |
 | **result** | a Cobalt 8 accepted all three components on the first pass (**~3½ minutes**) and booted running Carbon 8 or Argon 8 firmware. |
 
 Only the three application components are ever written — the bootloader is never touched.
